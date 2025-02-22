@@ -20,7 +20,7 @@
         <configuration>
           <archive>
             <manifestEntries>
-              <Main-Class>com.payco.api.Main</Main-Class>
+              <Main-Class>com.payco.was.Main</Main-Class>
             </manifestEntries>
           </archive>
         </configuration>

@@ -1,0 +1,21 @@
+{
+  "port": 9001,
+  "hosts": {
+    "hostA": {
+      "httpRoot": "../root/root",
+      "errorPage" : {
+        "403" : "403.html",
+        "404" : "403.html",
+        "500" : "403.html"
+      }
+    },
+    "hostB": {
+      "httpRoot": "../root/root",
+      "errorPage" : {
+        "403" : "403.html",
+        "404" : "403.html",
+        "500" : "403.html"
+      }
+    }
+  }
+}
