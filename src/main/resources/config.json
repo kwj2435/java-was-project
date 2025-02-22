@@ -1,21 +1,35 @@
 {
   "port": 9001,
-  "hosts": {
-    "hostA": {
-      "httpRoot": "../root/root",
+  "hosts": [
+    {
+      "hostName": "default",
+      "host": null,
+      "httpRoot": "/default",
       "errorPage" : {
-        "403" : "403.html",
-        "404" : "403.html",
-        "500" : "403.html"
+        "forbidden403": "default_403_error.html",
+        "notFound404": "default_404_error.html",
+        "internalServerError500": "default_500_error.html"
       }
     },
-    "hostB": {
-      "httpRoot": "../root/root",
+    {
+      "hostName": "payco",
+      "host": "payco.com",
+      "httpRoot": "/payco",
       "errorPage" : {
-        "403" : "403.html",
-        "404" : "403.html",
-        "500" : "403.html"
+        "forbidden403": "payco_403_error.html",
+        "notFound404": "payco_404_error.html",
+        "internalServerError500": "payco_500_error.html"
+      }
+    },
+    {
+      "hostName": "nhn",
+      "host": "nhn.com",
+      "httpRoot": "/nhn",
+      "errorPage": {
+        "forbidden403": "nhn_403_error.html",
+        "notFound404": "nhn_404_error.html",
+        "internalServerError500": "nhn_500_error.html"
       }
     }
-  }
+  ]
 }
