@@ -13,11 +13,8 @@ public class Main {
   public static void main(String[] args) {
     try {
       int serverPort = ConfigUtils.getPort();
-
       SimpleHttpServer httpServer = new SimpleHttpServer(serverPort);
       httpServer.start();
-
-      logger.info("HTTP server started on port {}", serverPort);
     } catch (IOException e) {
       logger.error("HTTP server start failed", e);
     }
