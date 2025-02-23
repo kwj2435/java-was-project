@@ -36,7 +36,7 @@ public class HttpServer {
     ExecutorService pool = Executors.newFixedThreadPool(NUM_THREADS);
 
     try (ServerSocket server = new ServerSocket(port)) {
-      logger.info("Accepting connections on port {}", server.getLocalPort());
+      logger.info("Was Server Started, Accepting connections on port {}", server.getLocalPort());
       while (true) {
         try {
           Socket request = server.accept();

@@ -8,6 +8,7 @@ import com.payco.was.model.HeaderModel.HeaderDto;
 import com.payco.was.servlet.ServletService;
 import com.payco.was.servlet.SimpleServlet;
 import com.payco.was.utils.ConfigUtils;
+import com.payco.was.utils.HttpUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -46,8 +47,10 @@ public abstract class BaseHandler implements RequestHandler {
       } else {
         SimpleServlet servlet = servletService.getServlet(headerDto.getPath());
         if (servlet != null) {
-          HttpRequest httpRequest;
-          HttpResponse httpResponse;
+          HttpRequest httpRequest = HttpUtils.convertToHttpRequest(headerDto);
+          HttpResponse httpResponse = HttpUtils.convertToHttpResponse(out);
+
+          servlet.service(httpRequest, httpResponse);
 
           responseBytes = "200".getBytes();
           responseCode = HttpStatus.OK.getCode();
@@ -113,7 +116,7 @@ public abstract class BaseHandler implements RequestHandler {
   }
 
   /**
-   * 500 에러 페이지 전달 메서드
+   * 500 에러 페이지 전달 -> Client
    * - 500 에러 HTML 읽기 중 실패할 경우 파일 전달 불가하여, Error 로그만 기록
    */
   private void send500ErrorPage(OutputStream out, String httpRoot, String errorPage){
@@ -140,6 +143,9 @@ public abstract class BaseHandler implements RequestHandler {
     }
   }
 
+  /**
+   * 응답 Header 전달 -> Client
+   */
   private void sendHeader(OutputStream out, String responseCode, String contentType, int length)
       throws IOException {
     StringBuilder response = new StringBuilder();

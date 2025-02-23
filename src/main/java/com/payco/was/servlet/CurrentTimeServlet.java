@@ -2,14 +2,12 @@ package com.payco.was.servlet;
 
 import com.payco.was.http.HttpRequest;
 import com.payco.was.http.HttpResponse;
+import java.time.LocalDateTime;
 
-/**
- * 과제 6-1번 스펙 구현 위한 Hello Servlet
- */
-public class Hello implements SimpleServlet{
+public class CurrentTimeServlet implements SimpleServlet{
 
   @Override
   public void service(HttpRequest httpRequest, HttpResponse httpResponse) {
-    httpResponse.writeBody("Hello World!");
+    httpResponse.writeBody(LocalDateTime.now().toString());
   }
 }

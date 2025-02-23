@@ -31,6 +31,7 @@ public class RequestProcessor implements Runnable{
     try {
       OutputStream out = connection.getOutputStream();
       String host = headerDto.getHost();
+      logger.info("Processing request - Host: {}, Path: {}", host, headerDto.getPath());
 
       if(host != null && virtualHosts.containsKey(host)) {
         virtualHosts.get(host).handleRequest(headerDto, out);
@@ -38,12 +39,12 @@ public class RequestProcessor implements Runnable{
         defaultHandler.handleRequest(headerDto, out);
       }
     } catch (IOException e) {
-      logger.error(e.getMessage());
+      logger.error("Error processing request: {}", e.getMessage());
     } finally {
       try {
         connection.close();
       } catch (IOException e) {
-        logger.error(e.getMessage());
+        logger.error("Failed to close connection: {}", e.getMessage());
       }
     }
   }
