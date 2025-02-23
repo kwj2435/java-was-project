@@ -9,6 +9,7 @@ import java.util.List;
 public class ConfigModel {
 
   public static class ConfigDto {
+
     private int port;
     private List<String> disallowedExtensions;
     private List<Host> hosts = new ArrayList<>();
@@ -23,6 +24,7 @@ public class ConfigModel {
   }
 
   public static class Host {
+
     private String hostName;
     private String host;
     private String httpRoot;
@@ -39,6 +41,7 @@ public class ConfigModel {
   }
 
   public static class ErrorPage {
+
     private String forbidden403;
     private String notFound404;
     private String internalServerError500;

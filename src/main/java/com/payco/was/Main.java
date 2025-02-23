@@ -1,6 +1,6 @@
 package com.payco.was;
 
-import com.payco.was.server.SimpleHttpServer;
+import com.payco.was.server.HttpServer;
 import com.payco.was.utils.ConfigUtils;
 import java.io.IOException;
 import org.slf4j.Logger;
@@ -12,11 +12,10 @@ public class Main {
 
   public static void main(String[] args) {
     try {
-      int serverPort = ConfigUtils.getPort();
-      SimpleHttpServer httpServer = new SimpleHttpServer(serverPort);
-      httpServer.start();
-    } catch (IOException e) {
-      logger.error("HTTP server start failed", e);
+      HttpServer webserver = new HttpServer(ConfigUtils.getPort());
+      webserver.start();
+    } catch (IOException ex) {
+      logger.error("Server could not start", ex);
     }
   }
 }

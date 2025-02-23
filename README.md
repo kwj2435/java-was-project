@@ -31,7 +31,10 @@ java -jar was.jar
     - 로그 내용에 따른 적절한 로그 레벨 적용
     - 오류 발생 시, StackTrace 전체를 로그 파일에 기록
 6. **간단한 WAS 구현** (0/1)
-7. **현재 시각 출력 SimpleServlet 구현체 작성** (0/1)
+   - url 매핑 기능
+   - 추후 확장 고려
+7. **현재 시각 출력 SimpleServlet 구현체 작성**
+   - WAS와 SimpleServlet Interface를 포함한 SimpleServlet 구현 객체 jar 분리
 8. **앞선 구현 사항 검증 Junit4 테스트 케이스 작성** (0/1)
 
 ---

@@ -1,25 +1,26 @@
 package com.payco.was.server.handler;
 
 import com.payco.was.enums.HttpStatus;
+import com.payco.was.http.HttpRequest;
+import com.payco.was.http.HttpResponse;
 import com.payco.was.model.ConfigModel.Host;
+import com.payco.was.model.HeaderModel.HeaderDto;
+import com.payco.was.servlet.ServletService;
+import com.payco.was.servlet.SimpleServlet;
 import com.payco.was.utils.ConfigUtils;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * VirtualHost 공통 Handler
- * HttpHandler Overriding 메서드를 BaseHandler 클래스가 아닌 하위 클래스에서 구현해야 하기에 abstract class 사용
- */
-public abstract class BaseHandler implements HttpHandler {
-
-  protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+public abstract class BaseHandler implements RequestHandler {
+  protected static final Logger logger = LoggerFactory.getLogger(BaseHandler.class);
+  protected static final ServletService servletService = new ServletService();
   protected Host host;
   protected String httpRoot;
 
@@ -31,31 +32,39 @@ public abstract class BaseHandler implements HttpHandler {
   /**
    * 사용자 요청 처리
    */
-  protected void handleRequest(HttpExchange exchange) {
+  public void handleRequest(HeaderDto headerDto, OutputStream out) {
     byte[] responseBytes;
-    int responseCode;
+    String responseCode;
+    String contentType;
 
     // 디렉터리 탐색 방어 코드
     try {
-      if(isForbidden(httpRoot, exchange)) {
+      if(isForbidden(httpRoot, headerDto.getPath())) {
         responseBytes = getErrorResponseBytes(httpRoot, host.getErrorPage().getForbidden403());
         responseCode = HttpStatus.FORBIDDEN.getCode();
+        contentType = "text/html; charset=UTF-8";
       } else {
-        if (false) {
+        SimpleServlet servlet = servletService.getServlet(headerDto.getPath());
+        if (servlet != null) {
+          HttpRequest httpRequest;
+          HttpResponse httpResponse;
+
           responseBytes = "200".getBytes();
           responseCode = HttpStatus.OK.getCode();
+          contentType = "text/html; charset=UTF-8";
         } else {
           responseBytes = getErrorResponseBytes(httpRoot, host.getErrorPage().getNotFound404());
           responseCode = HttpStatus.NOT_FOUND.getCode();
+          contentType = "text/html; charset=UTF-8";
         }
       }
 
-      exchange.sendResponseHeaders(responseCode, responseBytes.length);
-      exchange.getResponseBody().write(responseBytes);
-      exchange.getResponseBody().close();
+      sendHeader(out, responseCode, contentType, responseBytes.length);
+      out.write(responseBytes);
+      out.flush();
     } catch (Exception e) {
       logger.error("Error while handling request", e);
-      send500ErrorPage(exchange, httpRoot, host.getErrorPage().getInternalServerError500());
+      send500ErrorPage(out, httpRoot, host.getErrorPage().getInternalServerError500());
     }
   }
 
@@ -79,29 +88,35 @@ public abstract class BaseHandler implements HttpHandler {
    * - 경로 탐색 공격
    * - 허용되지 않은 확장자
    */
-  private boolean isForbidden(String httpRoot, HttpExchange httpExchange) {
-    // 경로 탐색 공격
-    Path requestpath = Paths.get(httpRoot, httpExchange.getRequestURI().getPath()).normalize();
-    if(!requestpath.startsWith(Paths.get(httpRoot))) {
+  private boolean isForbidden(String httpRoot, String requestUrl) {
+    // 요청 URI 가져오기
+    if (httpRoot == null) {
+      return true; // 요청 URI를 찾을 수 없으면 차단
+    }
+
+    // 경로 탐색 공격 방지
+    logger.info("httpRoot is {}", httpRoot);
+    logger.info("requestUrl is {}", requestUrl);
+    Path requestPath = Paths.get(httpRoot, requestUrl).normalize();
+    if (!requestPath.startsWith(Paths.get(httpRoot))) {
       return true;
     }
 
-    // 허용되지 않은 확장자
-    int lastDotIndex = requestpath.toString().lastIndexOf('.');
-    if(lastDotIndex == -1) {
+    // 허용되지 않은 확장자 검사
+    int lastDotIndex = requestPath.toString().lastIndexOf('.');
+    if (lastDotIndex == -1) {
       return false;
     }
-    String extension = requestpath.toString().substring(lastDotIndex + 1);
+    String extension = requestPath.toString().substring(lastDotIndex + 1);
 
     return ConfigUtils.getDisallowedExtensions().contains(extension);
   }
 
   /**
-   *
    * 500 에러 페이지 전달 메서드
    * - 500 에러 HTML 읽기 중 실패할 경우 파일 전달 불가하여, Error 로그만 기록
    */
-  private void send500ErrorPage(HttpExchange exchange, String httpRoot, String errorPage){
+  private void send500ErrorPage(OutputStream out, String httpRoot, String errorPage){
     byte[] errorResponseBytes;
 
     try {
@@ -112,12 +127,29 @@ public abstract class BaseHandler implements HttpHandler {
     }
 
     try {
-      exchange.sendResponseHeaders(HttpStatus.INTERNAL_SERVER_ERROR.getCode(), errorResponseBytes.length);
-      try (OutputStream responseBody = exchange.getResponseBody()) {
-        responseBody.write(errorResponseBytes);
-      }
+      sendHeader(
+          out,
+          HttpStatus.INTERNAL_SERVER_ERROR.getCode(),
+          "text/html; charset=UTF-8",
+          errorResponseBytes.length
+      );
+      out.write(errorResponseBytes);
+      out.flush();
     } catch (IOException e) { // 추가 IOException 발생 시 500 에러페이지 파일 전달 불가하여, Error 로그로만 기록
       logger.error("Failed to send error response", e);
     }
+  }
+
+  private void sendHeader(OutputStream out, String responseCode, String contentType, int length)
+      throws IOException {
+    StringBuilder response = new StringBuilder();
+
+    response.append(responseCode).append("\r\n");
+    response.append("Date: ").append(new Date()).append("\r\n");
+    response.append("Server: JHTTP 2.0").append("\r\n");
+    response.append("Content-length: ").append(length).append("\r\n");
+    response.append("Content-type: ").append(contentType).append("\r\n\r\n");
+
+    out.write(response.toString().getBytes(StandardCharsets.UTF_8));
   }
 }

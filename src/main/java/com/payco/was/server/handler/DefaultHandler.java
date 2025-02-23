@@ -1,20 +1,17 @@
 package com.payco.was.server.handler;
 
-import com.payco.was.utils.ConfigUtils;
-import com.sun.net.httpserver.HttpExchange;
+import com.payco.was.model.ConfigModel.Host;
+import com.payco.was.model.HeaderModel.HeaderDto;
+import java.io.OutputStream;
 
-/**
- * Default VirtualHost 핸들러
- */
 public class DefaultHandler extends BaseHandler {
 
-  public DefaultHandler() {
-    super(ConfigUtils.getHost("default"));
+  public DefaultHandler(Host host) {
+    super(host);
   }
 
-  // 사용자 요청 처리
   @Override
-  public void handle(HttpExchange exchange) {
-    handleRequest(exchange);
+  public void handleRequest(HeaderDto headerDto, OutputStream out) {
+    super.handleRequest(headerDto, out);
   }
 }
