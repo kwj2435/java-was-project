@@ -1,4 +1,4 @@
-package com.payco.was.http.handler;
+package com.payco.was.server.handler;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;

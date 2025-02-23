@@ -12,13 +12,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 서버 설정 유틸
+ * config.json 설정 정보 Utils
  */
 public class ConfigUtils {
 
-  private static Logger logger = LoggerFactory.getLogger(ConfigUtils.class);
-  private static Map<String, Host> hostMap = new HashMap<>();
+  private static final Logger logger = LoggerFactory.getLogger(ConfigUtils.class);
+  private static final Map<String, Host> hostMap = new HashMap<>();
   private static int port;
+  private static List<String> disallowedExtensions;
 
   static {
     try {
@@ -28,13 +29,13 @@ public class ConfigUtils {
           ConfigDto.class
       );
       port = configDto.getPort();
+      disallowedExtensions = configDto.getDisallowedExtensions();
       for (Host host : configDto.getHosts()) {
         hostMap.put(host.getHostName(), host); // host 이름을 키로 저장
       }
 
     } catch (IOException e) {
-      logger.error("Server Config 설정 오류");
-      e.printStackTrace();
+      logger.error("Server Config Error", e);
     }
   }
 
@@ -44,5 +45,9 @@ public class ConfigUtils {
 
   public static Host getHost(String hostName) {
     return hostMap.get(hostName);
+  }
+
+  public static List<String> getDisallowedExtensions() {
+    return disallowedExtensions;
   }
 }

@@ -10,6 +10,7 @@ public class ConfigModel {
 
   public static class ConfigDto {
     private int port;
+    private List<String> disallowedExtensions;
     private List<Host> hosts = new ArrayList<>();
 
     // NoArgsConstructor
@@ -17,6 +18,7 @@ public class ConfigModel {
 
     // Getter
     public int getPort() { return port; }
+    public List<String> getDisallowedExtensions() { return disallowedExtensions; }
     public List<Host> getHosts() { return hosts; }
   }
 

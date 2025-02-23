@@ -1,10 +1,13 @@
 {
   "port": 9001,
+  "disallowedExtensions": [
+    "exe"
+  ],
   "hosts": [
     {
       "hostName": "default",
       "host": null,
-      "httpRoot": "/default",
+      "httpRoot": "default",
       "errorPage" : {
         "forbidden403": "default_403_error.html",
         "notFound404": "default_404_error.html",
@@ -14,7 +17,7 @@
     {
       "hostName": "payco",
       "host": "payco.com",
-      "httpRoot": "/payco",
+      "httpRoot": "payco",
       "errorPage" : {
         "forbidden403": "payco_403_error.html",
         "notFound404": "payco_404_error.html",
@@ -24,7 +27,7 @@
     {
       "hostName": "nhn",
       "host": "nhn.com",
-      "httpRoot": "/nhn",
+      "httpRoot": "nhn",
       "errorPage": {
         "forbidden403": "nhn_403_error.html",
         "notFound404": "nhn_404_error.html",
