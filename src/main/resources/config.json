@@ -8,6 +8,7 @@
       "hostName": "default",
       "host": null,
       "httpRoot": "default",
+      "handlerName": "com.payco.was.server.handler.DefaultHandler",
       "errorPage" : {
         "forbidden403": "default_403_error.html",
         "notFound404": "default_404_error.html",
@@ -18,6 +19,7 @@
       "hostName": "payco",
       "host": "payco.com",
       "httpRoot": "payco",
+      "handlerName": "com.payco.was.server.handler.PaycoHandler",
       "errorPage" : {
         "forbidden403": "payco_403_error.html",
         "notFound404": "payco_404_error.html",
@@ -28,6 +30,7 @@
       "hostName": "nhn",
       "host": "nhn.com",
       "httpRoot": "nhn",
+      "handlerName": "com.payco.was.server.handler.NhnHandler",
       "errorPage": {
         "forbidden403": "nhn_403_error.html",
         "notFound404": "nhn_404_error.html",

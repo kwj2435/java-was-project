@@ -36,17 +36,17 @@ public abstract class BaseHandler implements RequestHandler {
   public void handleRequest(HeaderDto headerDto, OutputStream out) {
     byte[] responseBytes;
     String responseCode;
-    String contentType;
+    String contentType = "text/html; charset=UTF-8";
 
-    // 디렉터리 탐색 방어 코드
     try {
       if(isForbidden(httpRoot, headerDto.getPath())) {
+        logger.warn("Forbidden request: {}", headerDto.getPath());
         responseBytes = getErrorResponseBytes(httpRoot, host.getErrorPage().getForbidden403());
         responseCode = HttpStatus.FORBIDDEN.getCode();
-        contentType = "text/html; charset=UTF-8";
       } else {
         SimpleServlet servlet = servletService.getServlet(headerDto.getPath());
         if (servlet != null) {
+          logger.info("Servlet Found: {}", headerDto.getPath());
           HttpRequest httpRequest = HttpUtils.convertToHttpRequest(headerDto);
           HttpResponse httpResponse = HttpUtils.convertToHttpResponse(out);
 
@@ -54,11 +54,10 @@ public abstract class BaseHandler implements RequestHandler {
 
           responseBytes = "200".getBytes();
           responseCode = HttpStatus.OK.getCode();
-          contentType = "text/html; charset=UTF-8";
         } else {
+          logger.info("Servlet Not Found: {}", headerDto.getPath());
           responseBytes = getErrorResponseBytes(httpRoot, host.getErrorPage().getNotFound404());
           responseCode = HttpStatus.NOT_FOUND.getCode();
-          contentType = "text/html; charset=UTF-8";
         }
       }
 
@@ -98,8 +97,8 @@ public abstract class BaseHandler implements RequestHandler {
     }
 
     // 경로 탐색 공격 방지
-    logger.info("httpRoot is {}", httpRoot);
-    logger.info("requestUrl is {}", requestUrl);
+    logger.info("httpRoot : {}", httpRoot);
+    logger.info("requestUrl : {}", requestUrl);
     Path requestPath = Paths.get(httpRoot, requestUrl).normalize();
     if (!requestPath.startsWith(Paths.get(httpRoot))) {
       return true;

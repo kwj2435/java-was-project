@@ -3,7 +3,6 @@ package com.payco.was.server.processor;
 import com.payco.was.model.HeaderModel.HeaderDto;
 import com.payco.was.server.handler.DefaultHandler;
 import com.payco.was.server.handler.RequestHandler;
-import com.payco.was.utils.ConfigUtils;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -14,7 +13,7 @@ import org.slf4j.LoggerFactory;
 public class RequestProcessor implements Runnable{
 
   private final static Logger logger = LoggerFactory.getLogger(RequestProcessor.class);
-  private final static DefaultHandler defaultHandler = new DefaultHandler(ConfigUtils.getHost("default"));
+  private final static DefaultHandler defaultHandler = new DefaultHandler();
 
   private final Map<String, RequestHandler> virtualHosts;
   private final Socket connection;

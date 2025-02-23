@@ -35,7 +35,7 @@ public class ConfigUtils {
       }
 
     } catch (IOException e) {
-      logger.error("Server Config Error", e);
+      logger.error("Error during server config setup", e);
     }
   }
 
@@ -43,6 +43,9 @@ public class ConfigUtils {
     return port;
   }
 
+  public static Map<String, Host> getHostMap() {
+    return hostMap;
+  }
   public static Host getHost(String hostName) {
     return hostMap.get(hostName);
   }

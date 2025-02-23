@@ -26,6 +26,7 @@ public class ConfigModel {
   public static class Host {
 
     private String hostName;
+    private String handlerName;
     private String host;
     private String httpRoot;
     private ErrorPage errorPage;
@@ -35,6 +36,7 @@ public class ConfigModel {
 
     // Getter
     public String getHostName() { return hostName; }
+    public String getHandlerName() { return handlerName; }
     public String getHost() { return host; }
     public String getHttpRoot() { return httpRoot; }
     public ErrorPage getErrorPage() { return errorPage; }
