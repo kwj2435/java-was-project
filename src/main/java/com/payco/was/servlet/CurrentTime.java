@@ -3,6 +3,8 @@ package com.payco.was.servlet;
 import com.payco.was.http.HttpRequest;
 import com.payco.was.http.HttpResponse;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -17,7 +19,20 @@ public class CurrentTime implements SimpleServlet{
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분 ss초");
     String formattedDate = now.format(formatter);
 
-    httpResponse.writeBody("<html><h1>" + formattedDate +"</h1></html>");
+    InputStream responsePage =
+        getClass().getClassLoader().getResourceAsStream("default/CurrentTime.html");
+    if (responsePage == null) {
+      httpResponse.setStatus("404");
+      httpResponse.writeBody("Error: HTML template not found.".getBytes());
+      httpResponse.sendResponse();
+      return;
+    }
+
+    String htmlContent = new String(responsePage.readAllBytes(), StandardCharsets.UTF_8);
+
+    htmlContent = htmlContent.replace("{{CURRENT_TIME}}", formattedDate);
+
+    httpResponse.writeBody(htmlContent.getBytes(StandardCharsets.UTF_8));
     httpResponse.sendResponse();
   }
 }

@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 
 import static org.junit.Assert.assertEquals;
 
+// HTML 페이지가 동적 페이지 일 경우 테스트 방법 전환 필요
 public class HttpServerTest {
   private static HttpServer httpServer;
   private static int port = 9001;
@@ -64,23 +65,23 @@ public class HttpServerTest {
     testErrorResponse("../../../../abc", "nhn/nhn_403_error.html", "nhn.com");
   }
 
-//  // Hello Servlet 정상 매핑 테스트
-//  @Test
-//  public void testHelloServletResponse() throws Exception {
-//    testErrorResponse("/hello", "nhn/nhn_403_error.html", "localhost");
-//  }
-//
-//  // service.Hello Servlet 정상 매핑 확인
-//  @Test
-//  public void testServiceHelloServletResponse() throws Exception {
-//    testErrorResponse("/service.Hello", "nhn/nhn_403_error.html", "localhost");
-//  }
-//
-//  // Current Time Servlet 정상 매핑 확인
-//  @Test
-//  public void testCurrentTimeServletResponse() throws Exception {
-//    testErrorResponse("/time", "nhn/nhn_403_error.html", "localhost");
-//  }
+  // Hello Servlet 정상 매핑 테스트
+  @Test
+  public void testHelloServletResponse() throws Exception {
+    testErrorResponse("/Hello", "default/Hello.html", "localhost");
+  }
+
+  // service.Hello Servlet 정상 매핑 확인
+  @Test
+  public void testServiceHelloServletResponse() throws Exception {
+    testErrorResponse("/service.Hello", "default/ServiceHello.html", "localhost");
+  }
+
+  // Current Time Servlet 정상 매핑 확인
+  @Test
+  public void testCurrentTimeServletResponse() throws Exception {
+    testErrorResponse("/Time", "default/CurrentTime.html", "localhost");
+  }
 
 
   // host 별 error 페이지 테스트 공통 메서드

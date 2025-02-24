@@ -28,8 +28,8 @@ public class HttpResponse {
     headers.put(key, value);
   }
 
-  public void writeBody(String bodyContent) {
-    this.body = bodyContent.getBytes(StandardCharsets.UTF_8);
+  public void writeBody(byte[] bodyByte) {
+    this.body = bodyByte;
     setHeader("Content-Length", String.valueOf(body.length));
   }
 
