@@ -7,7 +7,7 @@ import java.io.OutputStream;
 public class NhnHandler extends BaseHandler{
 
   public NhnHandler() {
-    super(ConfigUtils.getHost("nhn"));
+    super(configUtils.getHost("nhn"));
   }
 
   @Override

@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 public abstract class BaseHandler implements RequestHandler {
   protected static final Logger logger = LoggerFactory.getLogger(BaseHandler.class);
   protected static final ServletService servletService = new ServletService();
+  protected static final ConfigUtils configUtils = new ConfigUtils();
   protected Host host;
   protected String httpRoot;
 
@@ -111,7 +112,7 @@ public abstract class BaseHandler implements RequestHandler {
     }
     String extension = requestPath.toString().substring(lastDotIndex + 1);
 
-    return ConfigUtils.getDisallowedExtensions().contains(extension);
+    return configUtils.getDisallowedExtensions().contains(extension);
   }
 
   /**
@@ -137,7 +138,8 @@ public abstract class BaseHandler implements RequestHandler {
       );
       out.write(errorResponseBytes);
       out.flush();
-    } catch (IOException e) { // 추가 IOException 발생 시 500 에러페이지 파일 전달 불가하여, Error 로그로만 기록
+    } catch (IOException e) {
+      // 추가 IOException 발생 시 500 에러페이지 파일 전달 불가하여, Error 로그로만 기록
       logger.error("Failed to send error response", e);
     }
   }

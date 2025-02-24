@@ -51,6 +51,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
+  <!-- 로깅 -->
   <dependencies>
     <dependency>
       <groupId>ch.qos.logback</groupId>
@@ -69,10 +70,23 @@
       <version>2.15.0</version>
     </dependency>
 
+    <!-- Test -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.13.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>3.12.4</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-junit-jupiter</artifactId>
+      <version>3.12.4</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

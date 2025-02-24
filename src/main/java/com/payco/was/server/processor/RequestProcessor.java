@@ -13,16 +13,20 @@ import org.slf4j.LoggerFactory;
 public class RequestProcessor implements Runnable{
 
   private final static Logger logger = LoggerFactory.getLogger(RequestProcessor.class);
-  private final static DefaultHandler defaultHandler = new DefaultHandler();
-
+  private final DefaultHandler defaultHandler;
   private final Map<String, RequestHandler> virtualHosts;
   private final Socket connection;
   private final HeaderDto headerDto;
 
-  public RequestProcessor(Socket connection, Map<String, RequestHandler> virtualHosts, HeaderDto headerDto) {
+  public RequestProcessor(
+          Socket connection,
+          Map<String, RequestHandler> virtualHosts,
+          HeaderDto headerDto,
+          DefaultHandler defaultHandler) {
     this.connection = connection;
     this.virtualHosts = virtualHosts;
     this.headerDto = headerDto;
+    this.defaultHandler = defaultHandler;
   }
 
   @Override

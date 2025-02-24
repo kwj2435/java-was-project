@@ -20,14 +20,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HttpServer {
+  private static final Logger logger = LoggerFactory.getLogger(HttpServer.class);
   private static final Map<String, RequestHandler> virtualHosts = new HashMap<>();
   private static final int NUM_THREADS = 50;
-
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private final ConfigUtils configUtils;
+  private final DefaultHandler defaultHandler;
   private final int port;
 
   public HttpServer(int port) throws IOException {
     this.port = port;
+    this.configUtils = new ConfigUtils();
+    this.defaultHandler = new DefaultHandler(configUtils.getHost("default"));
   }
 
   public void start() throws IOException {
@@ -40,7 +43,7 @@ public class HttpServer {
         try {
           Socket request = server.accept();
           HeaderDto host = readHostHeader(request.getInputStream());
-          Runnable r = new RequestProcessor(request, virtualHosts, host);
+          Runnable r = new RequestProcessor(request, virtualHosts, host, defaultHandler);
           pool.submit(r);
         } catch (IOException ex) {
           logger.error("Error accepting connection", ex);
@@ -53,7 +56,7 @@ public class HttpServer {
    * 서버 구동시점 virtualHosts 세팅
    */
   private void initVirtualHosts() {
-    Map<String, Host> hostMap = ConfigUtils.getHostMap();
+    Map<String, Host> hostMap = configUtils.getHostMap();
     hostMap.forEach((hostName, host) -> {
       try {
         String handlerClassName = host.getHandlerName();
@@ -65,7 +68,7 @@ public class HttpServer {
       } catch (Exception e) {
         logger.error("Error initializing virtual host", e);
         // Exception 발생시 기본 Handler 매핑
-        virtualHosts.put(hostName, new DefaultHandler());
+        virtualHosts.put(hostName, new DefaultHandler(configUtils.getHost("default")));
       }
     });
   }

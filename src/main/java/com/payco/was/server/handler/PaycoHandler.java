@@ -8,7 +8,7 @@ import java.io.OutputStream;
 public class PaycoHandler extends BaseHandler{
 
   public PaycoHandler() {
-    super(ConfigUtils.getHost("nhn"));
+    super(configUtils.getHost("nhn"));
   }
 
   @Override

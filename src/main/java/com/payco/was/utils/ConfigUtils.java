@@ -16,17 +16,17 @@ import org.slf4j.LoggerFactory;
  */
 public class ConfigUtils {
 
-  private static final Logger logger = LoggerFactory.getLogger(ConfigUtils.class);
-  private static final Map<String, Host> hostMap = new HashMap<>();
-  private static int port;
-  private static List<String> disallowedExtensions;
+  private final Logger logger = LoggerFactory.getLogger(ConfigUtils.class);
+  private final Map<String, Host> hostMap = new HashMap<>();
+  private int port;
+  private List<String> disallowedExtensions;
 
-  static {
+  public ConfigUtils() {
     try {
       ObjectMapper objectMapper = new ObjectMapper();
       ConfigDto configDto = objectMapper.readValue(
-          new File("src/main/resources/config.json"),
-          ConfigDto.class
+              new File("src/main/resources/config.json"),
+              ConfigDto.class
       );
       port = configDto.getPort();
       disallowedExtensions = configDto.getDisallowedExtensions();
@@ -39,18 +39,18 @@ public class ConfigUtils {
     }
   }
 
-  public static int getPort() {
+  public int getPort() {
     return port;
   }
 
-  public static Map<String, Host> getHostMap() {
+  public Map<String, Host> getHostMap() {
     return hostMap;
   }
-  public static Host getHost(String hostName) {
+  public Host getHost(String hostName) {
     return hostMap.get(hostName);
   }
 
-  public static List<String> getDisallowedExtensions() {
+  public List<String> getDisallowedExtensions() {
     return disallowedExtensions;
   }
 }
