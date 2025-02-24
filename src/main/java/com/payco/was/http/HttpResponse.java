@@ -17,6 +17,9 @@ public class HttpResponse {
     headers.put("Content-Type", "text/html; charset=UTF-8");
   }
 
+  public OutputStream getOutputStream() {
+    return outputStream;
+  }
   public void setStatus(String statusCode) {
     this.statusCode = statusCode;
   }

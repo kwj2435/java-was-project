@@ -6,7 +6,10 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class CurrentTimeServlet implements SimpleServlet{
+/**
+ * 과제 7번 현재 시각 출력 Servlet
+ */
+public class CurrentTime implements SimpleServlet{
 
   @Override
   public void service(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {

@@ -1,10 +1,12 @@
 package com.payco.was.server.handler;
 
+import com.payco.was.http.HttpRequest;
+import com.payco.was.http.HttpResponse;
 import com.payco.was.model.ConfigModel;
-import com.payco.was.model.HeaderModel.HeaderDto;
 
-import java.io.OutputStream;
-
+/**
+ * payco.com 호스트 Handler
+ */
 public class PaycoHandler extends BaseHandler{
 
   public PaycoHandler(ConfigModel.Host host) {
@@ -12,7 +14,7 @@ public class PaycoHandler extends BaseHandler{
   }
 
   @Override
-  public void handleRequest(HeaderDto headerDto, OutputStream out) {
-    super.handleRequest(headerDto, out);
+  public void handleRequest(HttpRequest httpRequest, HttpResponse httpResponse) {
+    super.handleRequest(httpRequest, httpResponse);
   }
 }

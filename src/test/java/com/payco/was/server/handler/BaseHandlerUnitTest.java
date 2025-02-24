@@ -1,6 +1,8 @@
 package com.payco.was.server.handler;
 
 import com.payco.was.enums.HttpStatus;
+import com.payco.was.http.HttpRequest;
+import com.payco.was.http.HttpResponse;
 import com.payco.was.model.ConfigModel;
 import com.payco.was.model.HeaderModel;
 import org.junit.Before;
@@ -16,18 +18,20 @@ import static org.mockito.Mockito.when;
 public class BaseHandlerUnitTest {
 
   private BaseHandler baseHandler;
-  private OutputStream out;
-  private HeaderModel.HeaderDto headerDto;
+  private OutputStream out = new ByteArrayOutputStream();;
   private ConfigModel.Host host;
   private ConfigModel.ErrorPage errorPage;
+  private HttpRequest httpRequest;
+  private HttpResponse httpResponse;
 
   @Before
   public void init() {
-    out = new ByteArrayOutputStream();
-    headerDto = mock(HeaderModel.HeaderDto.class);
+    httpRequest = mock(HttpRequest.class);
+    httpResponse = mock(HttpResponse.class);
     host = mock(ConfigModel.Host.class);
     errorPage = mock(ConfigModel.ErrorPage.class);
 
+    when(httpResponse.getOutputStream()).thenReturn(out);
     when(host.getHost()).thenReturn("localhost");
     when(host.getHttpRoot()).thenReturn("/default");
     when(host.getErrorPage()).thenReturn(errorPage);
@@ -40,10 +44,10 @@ public class BaseHandlerUnitTest {
   public void test_DirectoryTraversal_Forbidden() {
     // given
     when(errorPage.getForbidden403()).thenReturn("forbidden.html");
-    when(headerDto.getPath()).thenReturn("../../../../abc");
+    when(httpRequest.getPath()).thenReturn("../../../../abc");
 
     // when
-    baseHandler.handleRequest(headerDto, out);
+    baseHandler.handleRequest(httpRequest, httpResponse);
     String response = out.toString();
 
     // then
@@ -55,10 +59,10 @@ public class BaseHandlerUnitTest {
   public void test_disallowedExtensions_Forbidden() {
     // given
     when(errorPage.getForbidden403()).thenReturn("forbidden.html");
-    when(headerDto.getPath()).thenReturn("/abc");
+    when(httpRequest.getPath()).thenReturn("/abc.exe");
 
     // when
-    baseHandler.handleRequest(headerDto, out);
+    baseHandler.handleRequest(httpRequest, httpResponse);
     String response = out.toString();
 
     // then

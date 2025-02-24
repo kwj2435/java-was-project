@@ -1,54 +1,46 @@
 package com.payco.was.server.processor;
 
-import com.payco.was.model.HeaderModel.HeaderDto;
+import com.payco.was.http.HttpRequest;
+import com.payco.was.http.HttpResponse;
 import com.payco.was.server.handler.DefaultHandler;
 import com.payco.was.server.handler.RequestHandler;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.Socket;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 사용자의 요청을 전달받아 Virtual Host 기반 처리
+ * - virtualHosts Map에 등록된 HostHandler 존재 할 경우 해당 핸들러 호출
+ * - virtualHosts Map에 등록된 핸들러가 없을 경우 기본(Default) 핸들러 호출
+ */
 public class RequestProcessor implements Runnable{
 
   private final static Logger logger = LoggerFactory.getLogger(RequestProcessor.class);
   private final DefaultHandler defaultHandler;
   private final Map<String, RequestHandler> virtualHosts;
-  private final Socket connection;
-  private final HeaderDto headerDto;
+  private final HttpRequest httpRequest;
+  private final HttpResponse httpResponse;
 
   public RequestProcessor(
-          Socket connection,
+          HttpRequest httpRequest,
+          HttpResponse httpResponse,
           Map<String, RequestHandler> virtualHosts,
-          HeaderDto headerDto,
           DefaultHandler defaultHandler) {
-    this.connection = connection;
+    this.httpRequest = httpRequest;
     this.virtualHosts = virtualHosts;
-    this.headerDto = headerDto;
+    this.httpResponse = httpResponse;
     this.defaultHandler = defaultHandler;
   }
 
   @Override
   public void run() {
-    try {
-      OutputStream out = connection.getOutputStream();
-      String host = headerDto.getHost();
-      logger.info("Processing request - Host: {}, Path: {}", host, headerDto.getPath());
+    logger.info("Processing request - Host: {}, Path: {}", httpRequest.getHost(), httpRequest.getPath());
 
-      if(host != null && virtualHosts.containsKey(host)) {
-        virtualHosts.get(host).handleRequest(headerDto, out);
-      } else {
-        defaultHandler.handleRequest(headerDto, out);
-      }
-    } catch (IOException e) {
-      logger.error("Error processing request: {}", e.getMessage());
-    } finally {
-      try {
-        connection.close();
-      } catch (IOException e) {
-        logger.error("Failed to close connection: {}", e.getMessage());
-      }
+    String host = httpRequest.getHost();
+    if(host != null && virtualHosts.containsKey(host)) {
+      virtualHosts.get(host).handleRequest(httpRequest, httpResponse);
+    } else {
+      defaultHandler.handleRequest(httpRequest, httpResponse);
     }
   }
 }

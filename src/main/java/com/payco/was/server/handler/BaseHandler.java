@@ -4,11 +4,9 @@ import com.payco.was.enums.HttpStatus;
 import com.payco.was.http.HttpRequest;
 import com.payco.was.http.HttpResponse;
 import com.payco.was.model.ConfigModel.Host;
-import com.payco.was.model.HeaderModel.HeaderDto;
 import com.payco.was.servlet.ServletService;
 import com.payco.was.servlet.SimpleServlet;
 import com.payco.was.utils.ConfigUtils;
-import com.payco.was.utils.HttpUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -19,6 +17,10 @@ import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Http Request 공통 핸들러
+ * - RequestHandler Interface 구현체의 공통 기능 집합
+ */
 public abstract class BaseHandler implements RequestHandler {
   protected static final Logger logger = LoggerFactory.getLogger(BaseHandler.class);
   protected static final ServletService servletService = new ServletService();
@@ -34,40 +36,39 @@ public abstract class BaseHandler implements RequestHandler {
   /**
    * 사용자 요청 처리
    */
-  public void handleRequest(HeaderDto headerDto, OutputStream out) {
+  public void handleRequest(HttpRequest httpRequest, HttpResponse httpResponse) {
     byte[] responseBytes;
     String responseCode;
     String contentType = "text/html; charset=UTF-8";
 
     try {
-      if(isForbidden(httpRoot, headerDto.getPath())) {
-        logger.warn("Forbidden request: {}", headerDto.getPath());
+      if(isForbidden(httpRoot, httpRequest.getPath())) {
+        logger.warn("Forbidden request: {}", httpRequest.getPath());
         responseBytes = getErrorResponseBytes(httpRoot, host.getErrorPage().getForbidden403());
         responseCode = HttpStatus.FORBIDDEN.getCode();
+
+        sendHeader(httpResponse.getOutputStream(), responseCode, contentType, responseBytes.length);
+        httpResponse.getOutputStream().write(responseBytes);
       } else {
-        SimpleServlet servlet = servletService.getServlet(headerDto.getPath());
+        SimpleServlet servlet = servletService.getServlet(httpRequest.getPath());
         if (servlet != null) {
-          logger.info("Servlet Found: {}", headerDto.getPath());
-          HttpRequest httpRequest = HttpUtils.convertToHttpRequest(headerDto);
-          HttpResponse httpResponse = HttpUtils.convertToHttpResponse(out);
+          logger.info("Servlet Found: {}", httpRequest.getPath());
 
           servlet.service(httpRequest, httpResponse);
-
-          responseBytes = "200".getBytes();
-          responseCode = HttpStatus.OK.getCode();
         } else {
-          logger.info("Servlet Not Found: {}", headerDto.getPath());
+          logger.info("Servlet Not Found: {}", httpRequest.getPath());
           responseBytes = getErrorResponseBytes(httpRoot, host.getErrorPage().getNotFound404());
           responseCode = HttpStatus.NOT_FOUND.getCode();
+
+          sendHeader(httpResponse.getOutputStream(), responseCode, contentType, responseBytes.length);
+          httpResponse.getOutputStream().write(responseBytes);
         }
       }
-
-      sendHeader(out, responseCode, contentType, responseBytes.length);
-      out.write(responseBytes);
-      out.flush();
+      httpResponse.getOutputStream().flush();
+      httpResponse.getOutputStream().close();
     } catch (Exception e) {
       logger.error("Error while handling request", e);
-      send500ErrorPage(out, httpRoot, host.getErrorPage().getInternalServerError500());
+      send500ErrorPage(httpResponse.getOutputStream(), httpRoot, host.getErrorPage().getInternalServerError500());
     }
   }
 

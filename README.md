@@ -36,7 +36,7 @@ java -jar was.jar
    - WAS와 SimpleServlet Interface를 포함한 SimpleServlet 구현 객체 jar 분리 ❌ 
 8. **앞선 구현 사항 검증 Junit4 테스트 케이스 작성** ✅
    - Host 헤더 해석 테스트 (**단위 테스트**)
-   - 각 Host Error Page 정상 출력(403, 404, 500) 테스트 (**통합 테스**트)
+   - 각 Host Error Page 정상 출력(403, 404, 500) 테스트 (**통합, 단위 테스트**)
    - 보안 규칙 테스트 (**단위 테스트**)
      - 경로 탐색 공격
      - 허용되지 않은 확장자

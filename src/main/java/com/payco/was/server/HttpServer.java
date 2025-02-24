@@ -1,15 +1,14 @@
 package com.payco.was.server;
 
+import com.payco.was.http.HttpRequest;
+import com.payco.was.http.HttpResponse;
 import com.payco.was.model.ConfigModel.Host;
-import com.payco.was.model.HeaderModel.HeaderDto;
 import com.payco.was.server.handler.DefaultHandler;
 import com.payco.was.server.handler.RequestHandler;
 import com.payco.was.server.processor.RequestProcessor;
 import com.payco.was.utils.ConfigUtils;
-import java.io.BufferedReader;
+import com.payco.was.utils.HttpUtils;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
@@ -19,36 +18,42 @@ import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 해당 클래스는 Http 요청을 수신 및 처리하는 HttpServer
+ * - 이 클래스는 Socket 기반으로 동작하며 클라이언트의 요청을 받아, Request Processer로 전달하여 처리
+ * - VirtualHost 기능을 지원하여, 정해진 각 호스트별 요청 처리
+ */
 public class HttpServer {
   private static final Logger logger = LoggerFactory.getLogger(HttpServer.class);
   private static final Map<String, RequestHandler> virtualHosts = new HashMap<>();
   private static final int NUM_THREADS = 50;
-  private final ConfigUtils configUtils;
+  private final ConfigUtils configUtils = new ConfigUtils();
   private final DefaultHandler defaultHandler;
   private final int port;
 
   public HttpServer(int port) throws IOException {
     this.port = port;
-    this.configUtils = new ConfigUtils();
     this.defaultHandler = new DefaultHandler(configUtils.getHost("default"));
   }
 
   public void start() throws IOException {
-    initVirtualHosts();
+    HttpUtils httpUtils = new HttpUtils();
     ExecutorService pool = Executors.newFixedThreadPool(NUM_THREADS);
     Socket request;
+
+    initVirtualHosts();
 
     try (ServerSocket server = new ServerSocket(port)) {
       logger.info("Was Server Started, Accepting connections on port {}", server.getLocalPort());
       while (true) {
         try {
           request = server.accept();
-          HeaderDto host = readHostHeader(request.getInputStream());
-          Runnable r = new RequestProcessor(request, virtualHosts, host, defaultHandler);
+          HttpRequest httpRequest = httpUtils.convertToHttpRequest(request.getInputStream());
+          HttpResponse httpResponse = httpUtils.convertToHttpResponse(request.getOutputStream());
+          Runnable r = new RequestProcessor(httpRequest, httpResponse, virtualHosts, defaultHandler);
           pool.submit(r);
         } catch (IOException ex) {
           logger.error("Error accepting connection", ex);
-          break;
         }
       }
     }
@@ -73,35 +78,5 @@ public class HttpServer {
         virtualHosts.put(host.getHost(), new DefaultHandler(configUtils.getHost("default")));
       }
     });
-  }
-
-  /**
-   * Host Header 가져오기
-   * InputStream 은 한번 읽은 후 다시 읽을 수 없기 때문에, HeaderDto 로 변환하여 사용
-   */
-  private HeaderDto readHostHeader(InputStream request) throws IOException {
-    BufferedReader reader = new BufferedReader(new InputStreamReader(request));
-    String line;
-    String host = null;
-    String path = null;
-    String method = null;
-
-    while ((line = reader.readLine()) != null && !line.isEmpty()) {
-      String lowerCaseLine = line.toLowerCase();
-      if (lowerCaseLine.startsWith("host:")) {
-        host = line.substring(5).trim();
-      } else if(line.startsWith("GET") || line.startsWith("POST") || line.startsWith("PUT")
-          || line.startsWith("DELETE") || line.startsWith("HEAD") || line.startsWith("OPTIONS")) {
-        method = line.split(" ")[0];
-        path = line.split(" ")[1];
-      }
-    }
-
-    // fixme 요청이 두번 들어오는 경우 처리해야함
-    if(host == null || path == null || method == null) {
-      logger.error("Invalid request Header");
-      throw new IOException("Missing host or method in request");
-    }
-    return new HeaderDto(host, path, method);
   }
 }

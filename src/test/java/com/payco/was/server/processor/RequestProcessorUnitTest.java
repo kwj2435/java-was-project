@@ -1,28 +1,32 @@
 package com.payco.was.server.processor;
 
-import com.payco.was.model.HeaderModel;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import com.payco.was.http.HttpRequest;
+import com.payco.was.http.HttpResponse;
 import com.payco.was.server.handler.DefaultHandler;
 import com.payco.was.server.handler.NhnHandler;
 import com.payco.was.server.handler.RequestHandler;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.mockito.Mockito.*;
+import org.junit.Before;
+import org.junit.Test;
 
 public class RequestProcessorUnitTest {
 
   private RequestProcessor requestProcessor;
   private Socket mockSocket;
   private Map<String, RequestHandler> mockVirtualHosts = new HashMap<>();
-  private HeaderModel.HeaderDto mockHeaderDto;
   private DefaultHandler defaultHandler;
   private ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+  private HttpRequest httpRequest;
+  private HttpResponse httpResponse;
 
   @Before
   public void init() {
@@ -31,10 +35,12 @@ public class RequestProcessorUnitTest {
 
     mockVirtualHosts.put("test.com", nhnHandler);
     mockSocket = mock(Socket.class);
-    mockHeaderDto = mock(HeaderModel.HeaderDto.class);
+    httpRequest = mock(HttpRequest.class);
+    httpResponse = mock(HttpResponse.class);
+    when(httpResponse.getOutputStream()).thenReturn(out);
 
     requestProcessor = new RequestProcessor(
-            mockSocket, mockVirtualHosts, mockHeaderDto, defaultHandler);
+            httpRequest, httpResponse, mockVirtualHosts, defaultHandler);
   }
 
   // Host Header 존재시 지정된 Handler 호출
@@ -42,15 +48,15 @@ public class RequestProcessorUnitTest {
   public void testVirtualHostWithHost() throws IOException {
     // given
     String mockHost = "test.com";
-    when(mockHeaderDto.getHost()).thenReturn(mockHost);
-    when(mockHeaderDto.getPath()).thenReturn("/test-path");
+    when(httpRequest.getHost()).thenReturn(mockHost);
+    when(httpRequest.getPath()).thenReturn("/test-path");
     when(mockSocket.getOutputStream()).thenReturn(out);
 
     // when
     requestProcessor.run();
 
     // then
-    verify(mockVirtualHosts.get(mockHost)).handleRequest(mockHeaderDto, out);
+    verify(mockVirtualHosts.get(mockHost)).handleRequest(httpRequest, httpResponse);
   }
 
   // Host Header 미존재시 기본 Handler 호출
@@ -58,14 +64,14 @@ public class RequestProcessorUnitTest {
   public void testVirtualHostWithNotHst() throws IOException {
     // given
     String mockHost = "localhost.com";
-    when(mockHeaderDto.getHost()).thenReturn(mockHost);
-    when(mockHeaderDto.getPath()).thenReturn("/test-path");
+    when(httpRequest.getHost()).thenReturn(mockHost);
+    when(httpRequest.getPath()).thenReturn("/test-path");
     when(mockSocket.getOutputStream()).thenReturn(out);
 
     // when
     requestProcessor.run();
 
     // then
-    verify(defaultHandler).handleRequest(mockHeaderDto, out);
+    verify(defaultHandler).handleRequest(httpRequest, httpResponse);
   }
 }
