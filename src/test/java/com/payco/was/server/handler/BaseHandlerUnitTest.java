@@ -5,7 +5,6 @@ import com.payco.was.model.ConfigModel;
 import com.payco.was.model.HeaderModel;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.DisplayName;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
@@ -14,7 +13,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class BaseHandlerTest {
+public class BaseHandlerUnitTest {
 
   private BaseHandler baseHandler;
   private OutputStream out;
@@ -36,8 +35,8 @@ public class BaseHandlerTest {
     baseHandler = new DefaultHandler(host);
   }
 
+  // 경로 탐색 공격 방지
   @Test
-  @DisplayName("경로 탐색 공격 방지")
   public void test_DirectoryTraversal_Forbidden() {
     // given
     when(errorPage.getForbidden403()).thenReturn("forbidden.html");
@@ -51,8 +50,8 @@ public class BaseHandlerTest {
     assertTrue(response.contains(HttpStatus.FORBIDDEN.getCode()));
   }
 
+  // 허용되지 않은 확장자 요청 방지
   @Test
-  @DisplayName("허용되지 않은 확장자 요청 방지")
   public void test_disallowedExtensions_Forbidden() {
     // given
     when(errorPage.getForbidden403()).thenReturn("forbidden.html");

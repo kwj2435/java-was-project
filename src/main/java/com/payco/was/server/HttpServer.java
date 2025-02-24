@@ -36,17 +36,19 @@ public class HttpServer {
   public void start() throws IOException {
     initVirtualHosts();
     ExecutorService pool = Executors.newFixedThreadPool(NUM_THREADS);
+    Socket request;
 
     try (ServerSocket server = new ServerSocket(port)) {
       logger.info("Was Server Started, Accepting connections on port {}", server.getLocalPort());
       while (true) {
         try {
-          Socket request = server.accept();
+          request = server.accept();
           HeaderDto host = readHostHeader(request.getInputStream());
           Runnable r = new RequestProcessor(request, virtualHosts, host, defaultHandler);
           pool.submit(r);
         } catch (IOException ex) {
           logger.error("Error accepting connection", ex);
+          break;
         }
       }
     }
@@ -61,14 +63,14 @@ public class HttpServer {
       try {
         String handlerClassName = host.getHandlerName();
         Class<?> handlerClass = Class.forName(handlerClassName);
-        Object handlerInstance = handlerClass.getDeclaredConstructor().newInstance();
+        Object handlerInstance = handlerClass.getDeclaredConstructor(Host.class).newInstance(host);
 
-        virtualHosts.put(hostName, (RequestHandler) handlerInstance);
+        virtualHosts.put(host.getHost(), (RequestHandler) handlerInstance);
         logger.info("Virtual host '{}' is mapped to '{}'", hostName, handlerClassName);
       } catch (Exception e) {
         logger.error("Error initializing virtual host", e);
         // Exception 발생시 기본 Handler 매핑
-        virtualHosts.put(hostName, new DefaultHandler(configUtils.getHost("default")));
+        virtualHosts.put(host.getHost(), new DefaultHandler(configUtils.getHost("default")));
       }
     });
   }
@@ -98,6 +100,7 @@ public class HttpServer {
     // fixme 요청이 두번 들어오는 경우 처리해야함
     if(host == null || path == null || method == null) {
       logger.error("Invalid request Header");
+      throw new IOException("Missing host or method in request");
     }
     return new HeaderDto(host, path, method);
   }

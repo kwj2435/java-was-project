@@ -31,9 +31,15 @@ java -jar was.jar
     - 오류 발생 시, StackTrace 전체를 로그 파일에 기록
 6. **간단한 WAS 구현** ✅
    - url 매핑 기능
-   - 추후 확장 고려
-7. **현재 시각 출력 SimpleServlet 구현체 작성**
-   - WAS와 SimpleServlet Interface를 포함한 SimpleServlet 구현 객체 jar 분리
-8. **앞선 구현 사항 검증 Junit4 테스트 케이스 작성** (0/1)
+   - 추후 확장 고려 ❌
+7. **현재 시각 출력 SimpleServlet 구현체 작성** ✅
+   - WAS와 SimpleServlet Interface를 포함한 SimpleServlet 구현 객체 jar 분리 ❌ 
+8. **앞선 구현 사항 검증 Junit4 테스트 케이스 작성** ✅
+   - Host 헤더 해석 테스트 (**단위 테스트**)
+   - 각 Host Error Page 정상 출력(403, 404, 500) 테스트 (**통합 테스**트)
+   - 보안 규칙 테스트 (**단위 테스트**)
+     - 경로 탐색 공격
+     - 허용되지 않은 확장자
+   - Servlet Mapping 처리 (**통합 테스트**)
+     - Hello, service.Hello, time(현재시간)
 
----

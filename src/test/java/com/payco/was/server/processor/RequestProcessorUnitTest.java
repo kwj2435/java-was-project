@@ -6,7 +6,6 @@ import com.payco.was.server.handler.NhnHandler;
 import com.payco.was.server.handler.RequestHandler;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.DisplayName;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -16,7 +15,7 @@ import java.util.Map;
 
 import static org.mockito.Mockito.*;
 
-public class RequestProcessorTest {
+public class RequestProcessorUnitTest {
 
   private RequestProcessor requestProcessor;
   private Socket mockSocket;
@@ -38,8 +37,8 @@ public class RequestProcessorTest {
             mockSocket, mockVirtualHosts, mockHeaderDto, defaultHandler);
   }
 
+  // Host Header 존재시 지정된 Handler 호출
   @Test
-  @DisplayName("Host Header 존재시 지정된 Handler 호출")
   public void testVirtualHostWithHost() throws IOException {
     // given
     String mockHost = "test.com";
@@ -54,8 +53,8 @@ public class RequestProcessorTest {
     verify(mockVirtualHosts.get(mockHost)).handleRequest(mockHeaderDto, out);
   }
 
+  // Host Header 미존재시 기본 Handler 호출
   @Test
-  @DisplayName("Host Header 미존재시 기본 Handler 호출")
   public void testVirtualHostWithNotHst() throws IOException {
     // given
     String mockHost = "localhost.com";
