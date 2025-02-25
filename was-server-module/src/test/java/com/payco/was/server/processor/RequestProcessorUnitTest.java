@@ -1,21 +1,20 @@
 package com.payco.was.server.processor;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import com.payco.web.http.HttpRequest;
-import com.payco.web.http.HttpResponse;
 import com.payco.was.server.handler.DefaultHandler;
 import com.payco.was.server.handler.NhnHandler;
 import com.payco.was.server.handler.RequestHandler;
+import com.payco.web.http.HttpRequest;
+import com.payco.web.http.HttpResponse;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
-import org.junit.Before;
-import org.junit.Test;
+
+import static org.mockito.Mockito.*;
 
 public class RequestProcessorUnitTest {
 

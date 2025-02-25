@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class BaseHandler implements RequestHandler {
   protected static final Logger logger = LoggerFactory.getLogger(BaseHandler.class);
-  protected static final ServletRouter SERVLET_HANDLER = new ServletRouter();
+  protected static final ServletRouter servletRouter = new ServletRouter();
   protected static final ConfigUtils configUtils = new ConfigUtils();
   protected Host host;
   protected String httpRoot;
@@ -50,7 +50,7 @@ public abstract class BaseHandler implements RequestHandler {
         sendHeader(httpResponse.getOutputStream(), responseCode, contentType, responseBytes.length);
         httpResponse.getOutputStream().write(responseBytes);
       } else {
-        SimpleServlet servlet = SERVLET_HANDLER.getServlet(httpRequest.getPath());
+        SimpleServlet servlet = servletRouter.getServlet(httpRequest.getPath());
         if (servlet != null) {
           logger.info("Servlet Found: {}", httpRequest.getPath());
 

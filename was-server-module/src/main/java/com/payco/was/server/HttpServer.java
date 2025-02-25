@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 해당 클래스는 Http 요청을 수신 및 처리하는 HttpServer
- * - 이 클래스는 Socket 기반으로 동작하며 클라이언트의 요청을 받아, Request Processer로 전달하여 처리
+ * - 이 클래스는 Socket 기반으로 동작하며 클라이언트의 요청을 받아, Request Processor 로 전달하여 처리
  * - VirtualHost 기능을 지원하여, 정해진 각 호스트별 요청 처리
  */
 public class HttpServer {

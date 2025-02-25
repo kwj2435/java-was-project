@@ -5,6 +5,10 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * URL 경로에 따른 Servlet 객체를 조회하여 반환
+ * - 추후 설정 파일 추가 및 연동하여 설정 파일 기반 URL, Servlet 매핑 확장 가능
+ */
 public class ServletRouter {
 
   private static final Logger logger = LoggerFactory.getLogger(ServletRouter.class);

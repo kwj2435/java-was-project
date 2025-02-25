@@ -1,5 +1,8 @@
 package com.payco.web.http;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
@@ -7,19 +10,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HttpResponse {
+  private static final Logger logger = LoggerFactory.getLogger(HttpResponse.class);
+  private final Map<String, String> headers = new HashMap<>();
   private final OutputStream outputStream;
   private String statusCode = "200 OK";
-  private final Map<String, String> headers = new HashMap<>();
   private byte[] body = new byte[0];
 
   public HttpResponse(OutputStream outputStream) {
     this.outputStream = outputStream;
-    headers.put("Content-Type", "text/html; charset=UTF-8");
+    this.headers.put("Content-Type", "text/html; charset=UTF-8");
   }
 
   public OutputStream getOutputStream() {
     return outputStream;
   }
+
   public void setStatus(String statusCode) {
     this.statusCode = statusCode;
   }
@@ -48,5 +53,7 @@ public class HttpResponse {
     // body 전송
     outputStream.write(body);
     outputStream.flush();
+
+    logger.info("Http Response Status: {}, Body Length {}", statusCode, body.length);
   }
 }

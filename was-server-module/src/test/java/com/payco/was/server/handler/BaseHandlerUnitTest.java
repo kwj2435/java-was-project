@@ -67,4 +67,20 @@ public class BaseHandlerUnitTest {
     // then
     assertTrue(response.contains(HttpStatus.FORBIDDEN.getCode()));
   }
+
+  // Handler 500 에러 테스트
+  @Test
+  public void test_500ErrorPage_withIOException() {
+    // given
+    when(errorPage.getInternalServerError500()).thenReturn("default_500_error.html");
+    when(httpRequest.getPath()).thenReturn("/error");
+    when(host.getHost()).thenReturn(null);
+
+    // when
+    baseHandler.handleRequest(httpRequest, httpResponse);
+    String response = out.toString();
+
+    // then
+    assertTrue(response.contains(HttpStatus.INTERNAL_SERVER_ERROR.getCode()));
+  }
 }
