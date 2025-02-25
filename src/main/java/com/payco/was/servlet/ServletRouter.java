@@ -5,14 +5,14 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ServletService {
+public class ServletRouter {
 
-  private static final Logger logger = LoggerFactory.getLogger(ServletService.class);
+  private static final Logger logger = LoggerFactory.getLogger(ServletRouter.class);
   private static final Map<String, String> servletMapping = new HashMap<>();
-  private static final String basePackage = "com.payco.was.servlet.";  //추후 설정 파일로 동적 할당
+  private static final String basePackage = "com.payco.was.servlet.impl.";  //추후 설정 파일로 동적 할당
 
   // 추후 설정 파일로 동적 할당
-  public ServletService() {
+  public ServletRouter() {
     servletMapping.put("/Hello", "Hello");
     servletMapping.put("/service.Hello", "service.Hello");
     servletMapping.put("/Time", "CurrentTime");

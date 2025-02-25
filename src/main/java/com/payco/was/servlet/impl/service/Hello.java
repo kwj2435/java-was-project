@@ -1,4 +1,4 @@
-package com.payco.was.servlet.service;
+package com.payco.was.servlet.impl.service;
 
 import com.payco.was.http.HttpRequest;
 import com.payco.was.http.HttpResponse;

@@ -1,7 +1,9 @@
-package com.payco.was.servlet;
+package com.payco.was.servlet.impl;
 
 import com.payco.was.http.HttpRequest;
 import com.payco.was.http.HttpResponse;
+import com.payco.was.servlet.SimpleServlet;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -11,7 +13,7 @@ import java.time.format.DateTimeFormatter;
 /**
  * 과제 7번 현재 시각 출력 Servlet
  */
-public class CurrentTime implements SimpleServlet{
+public class CurrentTime implements SimpleServlet {
 
   @Override
   public void service(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {

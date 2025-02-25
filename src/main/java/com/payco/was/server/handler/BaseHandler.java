@@ -4,7 +4,7 @@ import com.payco.was.enums.HttpStatus;
 import com.payco.was.http.HttpRequest;
 import com.payco.was.http.HttpResponse;
 import com.payco.was.model.ConfigModel.Host;
-import com.payco.was.servlet.ServletService;
+import com.payco.was.servlet.ServletRouter;
 import com.payco.was.servlet.SimpleServlet;
 import com.payco.was.utils.ConfigUtils;
 import java.io.IOException;
@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class BaseHandler implements RequestHandler {
   protected static final Logger logger = LoggerFactory.getLogger(BaseHandler.class);
-  protected static final ServletService servletService = new ServletService();
+  protected static final ServletRouter SERVLET_HANDLER = new ServletRouter();
   protected static final ConfigUtils configUtils = new ConfigUtils();
   protected Host host;
   protected String httpRoot;
@@ -50,7 +50,7 @@ public abstract class BaseHandler implements RequestHandler {
         sendHeader(httpResponse.getOutputStream(), responseCode, contentType, responseBytes.length);
         httpResponse.getOutputStream().write(responseBytes);
       } else {
-        SimpleServlet servlet = servletService.getServlet(httpRequest.getPath());
+        SimpleServlet servlet = SERVLET_HANDLER.getServlet(httpRequest.getPath());
         if (servlet != null) {
           logger.info("Servlet Found: {}", httpRequest.getPath());
 

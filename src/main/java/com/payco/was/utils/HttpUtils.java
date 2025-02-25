@@ -37,6 +37,7 @@ public class HttpUtils {
     if(host == null || path == null || method == null) {
       return null;
     }
+    logger.info("Parsed Http Request Success. Method: {}, Host: {}, Path: {}", method, host, path);
     return new HttpRequest(method, host, path);
   }
 
