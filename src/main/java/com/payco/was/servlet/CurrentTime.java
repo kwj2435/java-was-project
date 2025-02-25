@@ -30,7 +30,7 @@ public class CurrentTime implements SimpleServlet{
 
     String htmlContent = new String(responsePage.readAllBytes(), StandardCharsets.UTF_8);
 
-    htmlContent = htmlContent.replace("{{CURRENT_TIME}}", formattedDate);
+    htmlContent = htmlContent.replace("{CURRENT_TIME}", formattedDate);
 
     httpResponse.writeBody(htmlContent.getBytes(StandardCharsets.UTF_8));
     httpResponse.sendResponse();

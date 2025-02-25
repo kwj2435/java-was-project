@@ -31,10 +31,11 @@ public class HttpUtils {
       }
     }
 
-    // fixme 요청이 두번 들어오는 경우 처리해야함
+    // 클라이언트의 소켓 연결 이후 빈 요청이 들어올 경우 해당 요청을 무시하고, Socket 종료
+    // - Connection: keep-alive
+    // - 소켓 연결은 하였으나, 실제 데이터를 전송하지 않은 경우
     if(host == null || path == null || method == null) {
-      logger.error("Invalid request Header");
-      throw new IOException("Missing host or method in request");
+      return null;
     }
     return new HttpRequest(method, host, path);
   }

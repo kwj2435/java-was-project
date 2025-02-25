@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 // HTML 페이지가 동적 페이지 일 경우 테스트 방법 전환 필요
 public class HttpServerTest {
@@ -80,9 +81,18 @@ public class HttpServerTest {
   // Current Time Servlet 정상 매핑 확인
   @Test
   public void testCurrentTimeServletResponse() throws Exception {
-    testErrorResponse("/Time", "default/CurrentTime.html", "localhost");
-  }
+    String expectedResponse = loadFileContent("default/CurrentTime.html");
 
+    // when
+    String response = removeResponseHeader(sendHttpRequest("localhost", "/Time"));
+
+    // 응답 및 예상 응답에서 공백을 제거
+    expectedResponse = expectedResponse.replaceAll("\\s+", "");
+    response = response.replaceAll("\\s+", "");
+
+    assertTrue(response.contains("<title>현재시각</title>"));
+    assertTrue(response.contains("<h1>현재시각:"));
+  }
 
   // host 별 error 페이지 테스트 공통 메서드
   private void testErrorResponse(String requestPath, String expectedFilePath, String host) throws Exception {
@@ -135,7 +145,7 @@ public class HttpServerTest {
   private String loadFileContent(String filePath) throws IOException {
     try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(filePath)) {
       if (inputStream == null) {
-        throw new FileNotFoundException("Resource not found: " + filePath);
+        throw new FileNotFoundException();
       }
       return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
     }

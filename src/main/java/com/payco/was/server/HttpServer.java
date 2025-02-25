@@ -50,8 +50,12 @@ public class HttpServer {
           request = server.accept();
           HttpRequest httpRequest = httpUtils.convertToHttpRequest(request.getInputStream());
           HttpResponse httpResponse = httpUtils.convertToHttpResponse(request.getOutputStream());
-          Runnable r = new RequestProcessor(httpRequest, httpResponse, virtualHosts, defaultHandler);
-          pool.submit(r);
+          if(httpRequest == null) {
+            request.close();
+          } else {
+            Runnable r = new RequestProcessor(httpRequest, httpResponse, virtualHosts, defaultHandler);
+            pool.submit(r);
+          }
         } catch (IOException ex) {
           logger.error("Error accepting connection", ex);
         }
