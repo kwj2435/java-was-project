@@ -5,13 +5,13 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.payco.was</groupId>
-    <artifactId>nhn-payco-project</artifactId>
+    <groupId>com.uijin.was</groupId>
+    <artifactId>uijin-was-project</artifactId>
     <version>1.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <groupId>com.payco.api</groupId>
+  <groupId>com.uijin.api</groupId>
   <artifactId>servlet-module</artifactId>
   <version>1.0</version>
 

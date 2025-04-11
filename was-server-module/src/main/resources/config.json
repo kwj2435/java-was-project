@@ -8,7 +8,7 @@
       "hostName": "default",
       "host": null,
       "httpRoot": "default",
-      "handlerName": "com.payco.was.server.handler.DefaultHandler",
+      "handlerName": "com.uijin.was.server.handler.DefaultHandler",
       "errorPage" : {
         "forbidden403": "default_403_error.html",
         "notFound404": "default_404_error.html",
@@ -16,25 +16,25 @@
       }
     },
     {
-      "hostName": "payco",
-      "host": "payco.com",
-      "httpRoot": "payco",
-      "handlerName": "com.payco.was.server.handler.PaycoHandler",
+      "hostName": "naver",
+      "host": "naver.com",
+      "httpRoot": "naver",
+      "handlerName": "com.uijin.was.server.handler.NaverHandler",
       "errorPage" : {
-        "forbidden403": "payco_403_error.html",
-        "notFound404": "payco_404_error.html",
-        "internalServerError500": "payco_500_error.html"
+        "forbidden403": "naver_403_error.html",
+        "notFound404": "naver_404_error.html",
+        "internalServerError500": "naver_500_error.html"
       }
     },
     {
-      "hostName": "nhn",
-      "host": "nhn.com",
-      "httpRoot": "nhn",
-      "handlerName": "com.payco.was.server.handler.NhnHandler",
+      "hostName": "kakao",
+      "host": "kakao.com",
+      "httpRoot": "kakao",
+      "handlerName": "com.uijin.was.server.handler.KakaoHandler",
       "errorPage": {
-        "forbidden403": "nhn_403_error.html",
-        "notFound404": "nhn_404_error.html",
-        "internalServerError500": "nhn_500_error.html"
+        "forbidden403": "kakao_403_error.html",
+        "notFound404": "kakao_404_error.html",
+        "internalServerError500": "kakao_500_error.html"
       }
     }
   ]
