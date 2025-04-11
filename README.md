@@ -1,4 +1,4 @@
-# JAVA 표준 라이브러리, Socket 이용 Virtual Routing - WAS 구현
+# JAVA, Socket 이용 Virtual Routing 및 WAS 구현
 
 ##  실행 방법
 
